@@ -8,10 +8,12 @@ let win, child;
 const createElectronShell = () => {
 	win = new BrowserWindow({ width: 800, height: 600 });
 	child = new BrowserWindow({ width: 600, height: 400, parent: win, modal: true });
-	dialog.showMessageBox({ title: 'MESSAGE BOX', message: 'Hello!'});
-
+	
 	win.loadURL(appUrl);
 	win.on('closed', () => { win = null; });
+
+	console.log(dialog.showOpenDialog({ properties: ['openfile']}));
+
 };
 
 app.on('ready', createElectronShell);
