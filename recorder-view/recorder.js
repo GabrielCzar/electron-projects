@@ -21,7 +21,7 @@ let ScreenManager = {
 					<li onclick="ScreenManager.setScreen('${source.id}')" >
 						<img src="${source.thumbnail.toDataURL()}" />
 						<h3>${source.name}</h3>
-					</li>`;
+					</li>`;	
 			})
 			listElement.innerHTML = template;
 		})
