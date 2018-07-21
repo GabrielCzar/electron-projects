@@ -1,5 +1,5 @@
-const { desktopCapturer } = require('electron');
-const fs = require('fs');
+let { desktopCapturer } = require('electron');
+let fs = require('fs');
 
 let videoElement = document.querySelector('video');
 let listElement = document.querySelector('ul');
@@ -27,14 +27,57 @@ let Rec = {
         }
     },
     stop(){
+        if(Rec.recorder.state !== null){
+            Rec.recorder.onstop = function(){
+                videoElement.src = '';
+                Rec.toArrayBuffer(new Blob(Rec.blobs, {type: 'video/webm'}), function(arrayBuffer){
+                    let buffer = Rec.toBuffer(arrayBuffer);
+                    let fileName = './my-video.webm';
+                    fs.writeFile(fileName, buffer, function(err){
+                        if(err){
+                            outputElement.innerHTML = 'ERROR';
+                        }else{
+                            outputElement.innerHTML = 'Saved video: ' + fileName;
+                            videoElement.src = fileName;
+                            videoElement.play();
+                            videoElement.controls = true;
+                        }
+                    })
+                });
+                Rec.recorder = null;
+            };
 
+            Rec.recorder.stop();
+        }
     },
     handleStream(stream){
+        Rec.recorder = new MediaRecorder(stream);
+        Rec.blobs = [];
         videoElement.poster = '';
         videoElement.src = URL.createObjectURL(stream);
+        Rec.recorder.ondataavailable = function(event){
+            Rec.blobs.push(event.data);
+        };
+        Rec.recorder.start();
     },
     handleUserMediaError(e){
         console.error('handleUserMediaError', e);
+    },
+    toArrayBuffer(blob, callback){
+        let fileReader = new FileReader();
+        fileReader.onload = function(){
+            let arrayBuffer = this.result;
+            callback(arrayBuffer);
+        };
+        fileReader.readAsArrayBuffer(blob);
+    },
+    toBuffer(arrayBuffer){
+        let buffer = new Buffer(arrayBuffer.byteLength);
+        let arr = new Uint8Array(arrayBuffer);
+        for(let i = 0; i < arr.byteLength; i++){
+            buffer[i] = arr[i];
+        }
+        return buffer;
     }
 };
 
