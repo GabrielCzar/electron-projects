@@ -1,5 +1,5 @@
 // initial project 
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, Menu } = require('electron');
 
 const appUrl = `file://${__dirname}/index.html`;
 
