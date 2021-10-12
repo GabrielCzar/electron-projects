@@ -10,6 +10,6 @@
   "author": "GabrielCzar",
   "license": "ISC",
   "devDependencies": {
-    "electron": "2.0.5"
+    "electron": "11.5.0"
   }
 }
